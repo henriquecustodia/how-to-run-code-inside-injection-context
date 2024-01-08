@@ -1,14 +1,46 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import {
+  Component,
+  EnvironmentInjector,
+  OnInit,
+  inject,
+  runInInjectionContext,
+} from '@angular/core';
+import { messageToken } from './tokens';
+import { FormsModule } from '@angular/forms';
+
+function appendMessage(message: string) {
+  const messageFromToken = inject(messageToken);
+
+  return `${messageFromToken} | ${message}`;
+}
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [FormsModule],
   selector: 'how-to-run-code-inside-injection-context-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  template: `
+    <h1>{{ message }}</h1>
+
+    <input [(ngModel)]="customMessage" />
+    <button (click)="changeMessage(customMessage)">Append Custom Message</button>
+  `,
 })
-export class AppComponent {
-  title = 'how-to-run-code-inside-injection-context';
+export class AppComponent implements OnInit {
+  environmentInjector = inject(EnvironmentInjector);
+
+  message!: string;
+
+  customMessage!: string;
+
+  ngOnInit(): void {
+    runInInjectionContext(this.environmentInjector, () => {
+      this.message = inject(messageToken);
+    });
+  }
+
+  changeMessage(message: string) {
+    runInInjectionContext(this.environmentInjector, () => {
+      this.message = appendMessage(message);
+    });
+  }
 }
