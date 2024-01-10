@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { CAT_FEATURE, GREETINGS_TOKEN } from './tokens';
 import { FormsModule } from '@angular/forms';
+import { CatMessageCreatorService } from './cat-message-creator.service';
 
 function appendMessage(message: string) {
   const messageFromToken = inject(GREETINGS_TOKEN);
@@ -14,7 +15,6 @@ function appendMessage(message: string) {
   return `${messageFromToken} | ${message}`;
 }
 
-import { CatMessageCreatorService } from './cat-message-creator.service';
 
 @Component({
   standalone: true,
