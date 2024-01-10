@@ -5,13 +5,31 @@ import {
   inject,
   runInInjectionContext,
 } from '@angular/core';
-import { messageToken } from './tokens';
+import { CAT_FEATURE, GREETINGS_TOKEN } from './tokens';
 import { FormsModule } from '@angular/forms';
 
 function appendMessage(message: string) {
-  const messageFromToken = inject(messageToken);
+  const messageFromToken = inject(GREETINGS_TOKEN);
 
   return `${messageFromToken} | ${message}`;
+}
+
+import { Injectable } from '@angular/core';
+import { randCat } from '@ngneat/falso';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CatMessageCreatorService {
+  environmentInjector = inject(EnvironmentInjector);
+
+  createMessage(getMessageCb: () => string) {
+    return runInInjectionContext(this.environmentInjector, () => {
+      const message = getMessageCb();
+
+      return `${randCat()} is ${message}`;
+    });
+  }
 }
 
 @Component({
@@ -22,23 +40,40 @@ function appendMessage(message: string) {
     <h1>{{ message }}</h1>
 
     <input [(ngModel)]="customMessage" />
-    <button (click)="changeMessage(customMessage)">Append Custom Message</button>
+    <button (click)="changeMessage(customMessage)">
+      Append Custom Message
+    </button>
+
+    <h1>{{ catMessage }}</h1>
+    
   `,
 })
 export class AppComponent implements OnInit {
   environmentInjector = inject(EnvironmentInjector);
 
+  catMessageCreatorService = inject(CatMessageCreatorService);
+
   message!: string;
 
   customMessage!: string;
 
+  catMessage!: string
+
   ngOnInit(): void {
+    // exemplo 1
     runInInjectionContext(this.environmentInjector, () => {
-      this.message = inject(messageToken);
+      this.message = inject(GREETINGS_TOKEN);
+    });
+
+    // exemplo 3
+    this.catMessage = this.catMessageCreatorService.createMessage(() => {
+      const message = inject(CAT_FEATURE);
+      return message;
     });
   }
 
   changeMessage(message: string) {
+    // exemplo 2
     runInInjectionContext(this.environmentInjector, () => {
       this.message = appendMessage(message);
     });

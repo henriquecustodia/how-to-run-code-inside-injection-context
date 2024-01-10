@@ -17,6 +17,7 @@
     "@angular/platform-browser": "~17.0.0",
     "@angular/platform-browser-dynamic": "~17.0.0",
     "@angular/router": "~17.0.0",
+    "@ngneat/falso": "^7.1.1",
     "@nx/angular": "17.2.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
