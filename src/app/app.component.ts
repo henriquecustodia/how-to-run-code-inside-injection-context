@@ -14,23 +14,7 @@ function appendMessage(message: string) {
   return `${messageFromToken} | ${message}`;
 }
 
-import { Injectable } from '@angular/core';
-import { randCat } from '@ngneat/falso';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class CatMessageCreatorService {
-  environmentInjector = inject(EnvironmentInjector);
-
-  createMessage(getMessageCb: () => string) {
-    return runInInjectionContext(this.environmentInjector, () => {
-      const message = getMessageCb();
-
-      return `${randCat()} is ${message}`;
-    });
-  }
-}
+import { CatMessageCreatorService } from './cat-message-creator.service';
 
 @Component({
   standalone: true,
